@@ -14,21 +14,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-
 @Entity
-@Table(name = "user_list_bootstrap")
+@Table(name = "user_list_js")
 public class User implements UserDetails {
 
     @Column(name = "password")
-    @Size(min = 8, message = "Не менее восьми символов")
     private String password;
     @Column(name = "username")
-    @Size(min = 5, message = "Не менее пяти символов")
     private String username;
 
     @Id
@@ -56,8 +52,8 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles_bootstrap",
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles_js",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "roles_id"))
     private Set<Role> roles = new HashSet<>();
@@ -170,4 +166,6 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
 }

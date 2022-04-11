@@ -6,7 +6,9 @@ import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.model.Role;
 
 @Repository
-public interface RoleDAO extends JpaRepository <Role, Integer> {
+public interface RoleDao extends JpaRepository<Role, Integer> {
     @Query("SELECT r FROM Role r WHERE r.name = :name")
     Role getRoleByName(String name);
+
+
 }

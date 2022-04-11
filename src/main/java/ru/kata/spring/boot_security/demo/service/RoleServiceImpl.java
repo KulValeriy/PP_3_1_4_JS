@@ -1,8 +1,9 @@
 package ru.kata.spring.boot_security.demo.service;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.kata.spring.boot_security.demo.DAO.RoleDAO;
+import ru.kata.spring.boot_security.demo.DAO.RoleDao;
 import ru.kata.spring.boot_security.demo.model.Role;
 
 import java.util.HashSet;
@@ -10,12 +11,12 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class RoleServiceImpl implements RoleService{
+public class RoleServiceImpl implements RoleService {
 
-    private final RoleDAO roleDao;
+    private final RoleDao roleDao;
 
     @Autowired
-    public RoleServiceImpl(RoleDAO roleDao) {
+    public RoleServiceImpl(RoleDao roleDao) {
         this.roleDao = roleDao;
     }
 
@@ -35,4 +36,3 @@ public class RoleServiceImpl implements RoleService{
     }
 
 }
-
