@@ -17,6 +17,7 @@ public class Role implements GrantedAuthority {
     @Column
     private String name;
 
+
     public Role() {
     }
 
@@ -31,6 +32,11 @@ public class Role implements GrantedAuthority {
 
     public int getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 
     public void setId(int id) {

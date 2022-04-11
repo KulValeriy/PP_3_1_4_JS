@@ -16,58 +16,65 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 
 @Entity
-@Table(name = "user_list")
+@Table(name = "user_list_bootstrap")
 public class User implements UserDetails {
 
     @Column(name = "password")
     @Size(min = 8, message = "Не менее восьми символов")
     private String password;
-
     @Column(name = "username")
     @Size(min = 5, message = "Не менее пяти символов")
     private String username;
-
 
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     private String name;
-    @Column(name = "surname", nullable = false)
+    @Column(name = "surname")
     private String surname;
-    @Column(name = "birthYear", nullable = false)
-    private int birthYear;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles_security",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "roles_id"))
-    private Set<Role> roles;
+    @Column(name = "age")
+    private int age;
+    @Column(name = "email")
+    private String email;
 
 
-    @Override
-    public String toString() {
-        return "User " +
-                "id = " + id +
-                ", name = " + name + '\'' +
-                ", surname = " + surname + '\'' +
-                ", birthYear = " + birthYear
-                ;
-    }
-
-    public User(String password, String username, int id, String name, String surname, int birthYear, Set<Role> roles) {
+    public User(String password, String username, int id, String name, String surname, int age, String email, Set<Role> roles) {
         this.password = password;
         this.username = username;
         this.id = id;
         this.name = name;
         this.surname = surname;
-        this.birthYear = birthYear;
+        this.age = age;
+        this.email = email;
         this.roles = roles;
+    }
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles_bootstrap",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "roles_id"))
+    private Set<Role> roles = new HashSet<>();
+
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "password='" + password + '\'' +
+                ", username='" + username + '\'' +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", birthYear=" + age +
+                ", email='" + email + '\'' +
+                ", roles=" + roles +
+                '}';
     }
 
     public User() {
@@ -97,12 +104,20 @@ public class User implements UserDetails {
         this.surname = surname;
     }
 
-    public int getBirthYear() {
-        return birthYear;
+    public int getAge() {
+        return age;
     }
 
-    public void setBirthYear(int birthYear) {
-        this.birthYear = birthYear;
+    public void setAge(int birthYear) {
+        this.age = birthYear;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     public void setPassword(String password) {
@@ -113,12 +128,12 @@ public class User implements UserDetails {
         this.username = username;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
+    public String getEmail() {
+        return email;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
@@ -156,4 +171,3 @@ public class User implements UserDetails {
         return true;
     }
 }
-

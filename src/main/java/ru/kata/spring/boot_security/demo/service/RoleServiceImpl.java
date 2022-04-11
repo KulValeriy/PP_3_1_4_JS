@@ -28,4 +28,11 @@ public class RoleServiceImpl implements RoleService{
     public Set<Role> findByIdRoles(List<Integer> roles) {
         return new HashSet<>(roleDao.findAllById(roles));
     }
+
+    @Override
+    public Role getRoleByName(String name) {
+        return roleDao.getRoleByName(name);
+    }
+
 }
+

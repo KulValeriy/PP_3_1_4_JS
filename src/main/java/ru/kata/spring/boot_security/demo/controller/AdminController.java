@@ -3,20 +3,24 @@ package ru.kata.spring.boot_security.demo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleServiceImpl;
 import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
 
-import javax.validation.Valid;
-import java.util.List;
+import java.security.Principal;
+import java.util.HashSet;
+import java.util.Set;
 
 @Controller
 public class AdminController {
+
     private UserServiceImpl userServiceImpl;
     private final RoleServiceImpl roleService;
 
@@ -32,57 +36,56 @@ public class AdminController {
     }
 
     @GetMapping("/admin")
-    public String users(Model model) {
+    public String users(Principal principal, Model model) {
         model.addAttribute("users", userServiceImpl.findAll());
-        return "users";
-    }
-
-    @GetMapping(value = "admin/user")
-    public String getUser(@RequestParam(value = "id", required = false) int id, Model model) {
-        model.addAttribute("user", userServiceImpl.getById(id));
-        return "user";
+        model.addAttribute("user", userServiceImpl.findByUsername(principal.getName()));
+        return "adminPage";
     }
 
     @GetMapping(value = "admin/edit")
     public String edit(@RequestParam(value = "id") int id, Model model) {
         model.addAttribute("user", userServiceImpl.getById(id));
-        return "editPage";
+        return "user";
     }
 
-    @PostMapping("admin/edit")
-    public String pageEdit(@RequestParam("role") List<Integer> roles,
-                           @Valid User user,
-                           BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "editPage";
-        } else {
-            user.setRoles(roleService.findByIdRoles(roles));
-            userServiceImpl.save(user);
-            return "redirect:/admin";
+    @PostMapping("/{id}/edit")
+    public String editUser(@ModelAttribute("user") User user,
+                           @RequestParam(required = false) String roleAdmin) {
+        Set<Role> roles = new HashSet<>();
+        roles.add(roleService.getRoleByName("ROLE_USER"));
+        if (roleAdmin != null && roleAdmin.equals("ROLE_ADMIN")) {
+            roles.add(roleService.getRoleByName("ROLE_ADMIN"));
         }
+        user.setRoles(roles);
+        userServiceImpl.editUser(user);
+
+        return "redirect:/admin";
     }
 
-    @GetMapping("admin/add")
-    public String add(User user) {
+    @GetMapping("/add")
+    public String add(Principal principal, Model model) {
+        model.addAttribute("user", userServiceImpl.findByUsername(principal.getName()));
         return "add";
     }
 
-    @PostMapping("admin/add")
-    public String pageAdd(@RequestParam("role") List<Integer>  roles,
-                          @ModelAttribute("user") @Valid User user,
-                          BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "add";
+    @PostMapping("/add")
+    public String addUser(@ModelAttribute("user") User user,
+                          @RequestParam(required = false) String roleAdmin) {
+        Set<Role> roles = new HashSet<>();
+        roles.add(roleService.getRoleByName("ROLE_USER"));
+        if (roleAdmin != null && roleAdmin.equals("ROLE_ADMIN")) {
+            roles.add(roleService.getRoleByName("ROLE_ADMIN"));
         }
 
-        user.setRoles(roleService.findByIdRoles(roles));
+        user.setRoles(roles);
         userServiceImpl.save(user);
         return "redirect:/admin";
     }
 
-    @GetMapping(value = "admin/delete")
-    public String delete(@RequestParam(value = "id") int id) {
+    @DeleteMapping("/{id}/delete")
+    public String deleteUser(@PathVariable("id") int id) {
         userServiceImpl.deleteById(id);
         return "redirect:/admin";
     }
+
 }

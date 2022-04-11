@@ -10,16 +10,16 @@ import java.security.Principal;
 @Controller
 public class UserController {
 
-    private final UserServiceImpl userServiceImpl;
+    private final UserServiceImpl userService;
 
     public UserController(UserServiceImpl userService) {
-        this.userServiceImpl = userService;
+        this.userService = userService;
     }
 
 
-    @GetMapping(value = "/user")
-    public String getUser(Model model, Principal principal) {
-        model.addAttribute("user", userServiceImpl.findByUsername(principal.getName()));
+    @GetMapping("/user")
+    public String showUserInfo(Principal principal, Model model) {
+        model.addAttribute("user", userService.findByUsername(principal.getName()));
         return "user";
     }
 
