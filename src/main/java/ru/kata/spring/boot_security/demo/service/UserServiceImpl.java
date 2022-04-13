@@ -1,24 +1,29 @@
 package ru.kata.spring.boot_security.demo.service;
 
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.kata.spring.boot_security.demo.DAO.RoleDAO;
-import ru.kata.spring.boot_security.demo.DAO.UserDAO;
+import ru.kata.spring.boot_security.demo.DAO.RoleDao;
+import ru.kata.spring.boot_security.demo.DAO.UserDao;
 import ru.kata.spring.boot_security.demo.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
-@AllArgsConstructor
 public class UserServiceImpl implements UserService, UserDetailsService {
+    public UserServiceImpl(UserDao userDao, RoleDao roleDao, PasswordEncoder passwordEncoder) {
+        this.userDao = userDao;
+        this.roleDao = roleDao;
+        this.passwordEncoder = passwordEncoder;
+    }
 
-    private final UserDAO userDao;
-    private final RoleDAO roleDao;
+    private final UserDao userDao;
+    private final RoleDao roleDao;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -40,12 +45,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public void editUser(User user) {
-        userDao.saveAndFlush(user);
+        userDao.save(user);
     }
 
     @Override
-    public User getById(int id) {
-        return userDao.getById(id);
+    public User getUserById(int id) {
+        User user = null;
+        Optional<User> optionalUser = userDao.findById(id);
+        if (optionalUser.isPresent()) {
+            user = optionalUser.get();
+        }
+        return user;
     }
 
     @Override
@@ -54,8 +64,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void deleteById(int id) {
-        userDao.deleteById(id);
+    public void delete(User user) {
+        userDao.delete(user);
     }
 
     @Override
