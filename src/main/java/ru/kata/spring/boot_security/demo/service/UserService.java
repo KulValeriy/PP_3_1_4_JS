@@ -9,7 +9,7 @@ import java.util.List;
 public interface UserService {
     List<User> findAll();
 
-    User getUserById(int id);
+    String getUserById(int id);
 
     void save(User user);
 

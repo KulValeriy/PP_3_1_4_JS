@@ -12,7 +12,6 @@ import ru.kata.spring.boot_security.demo.DAO.UserDao;
 import ru.kata.spring.boot_security.demo.model.User;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
@@ -48,14 +47,22 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userDao.save(user);
     }
 
+//    @Override
+//    public User getUserById(int id) {
+//        User user = null;
+//        Optional<User> optionalUser = userDao.findById(id);
+//        if (optionalUser.isPresent()) {
+//            user = optionalUser.get();
+//        }
+//        return user;
+//    }
+
     @Override
-    public User getUserById(int id) {
-        User user = null;
-        Optional<User> optionalUser = userDao.findById(id);
-        if (optionalUser.isPresent()) {
-            user = optionalUser.get();
-        }
-        return user;
+    public String getUserById(int id) {
+        return userDao.findById(id)
+                .orElseThrow(() -> new IllegalStateException("User not found"))
+                .getName();
+
     }
 
     @Override
